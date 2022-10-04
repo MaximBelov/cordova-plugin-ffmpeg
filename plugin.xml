@@ -45,7 +45,7 @@
         <source url="https://cdn.cocoapods.org/"/>
       </config>
       <pods use-frameworks="true">
-          <pod name="ffmpeg-kit-ios-full-gpl" spec="~> 4.5.1.LTS" />
+        <pod name="mobile-ffmpeg-full-gpl" spec="~> 4.4" />
       </pods>
     </podspec>
   </platform>

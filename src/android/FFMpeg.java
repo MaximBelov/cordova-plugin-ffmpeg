@@ -1,43 +1,50 @@
 package com.marin.plugin;
 
+import android.util.Log;
+
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
-import com.arthenica.mobileffmpeg.Config;
-import com.arthenica.mobileffmpeg.ExecuteCallback;
-import com.arthenica.mobileffmpeg.FFmpeg;
-import com.arthenica.mobileffmpeg.FFprobe;
-import com.arthenica.mobileffmpeg.MediaInformation;
-import com.arthenica.mobileffmpeg.Statistics;
-import com.arthenica.mobileffmpeg.StatisticsCallback;
 
-import static com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS;
- // ref: https://github.com/tanersener/mobile-ffmpeg/wiki/Android
+import com.arthenica.ffmpegkit.FFmpegKit;
+import com.arthenica.ffmpegkit.FFmpegSession;
+import com.arthenica.ffmpegkit.FFmpegSessionCompleteCallback;
+import com.arthenica.ffmpegkit.FFprobeKit;
+import com.arthenica.ffmpegkit.MediaInformationSession;
+import com.arthenica.ffmpegkit.ReturnCode;
+
 public class FFMpeg extends CordovaPlugin {
+    private static final String TAG = "FFMpegPlugin";
 
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
         if (action.equals("exec")) {
-            FFmpeg.executeAsync(data.getString(0), new ExecuteCallback() {
-                @Override
-                public void apply(long executionId, int returnCode) {
-                    String result = String.format("Done out=%s", Config.getLastCommandOutput());
-                    if (returnCode == RETURN_CODE_SUCCESS)
-                        callbackContext.success(result);
-                    else
-                        callbackContext.error("Error Code: " + returnCode);
-                }
+          FFmpegKit.executeAsync(data.getString(0), new FFmpegSessionCompleteCallback() {
+            @Override
+            public void apply(FFmpegSession session) {
+              Log.d(TAG, String.format("FFmpeg process exited with state %s and rc %s.%s", session.getState(), session.getReturnCode(), notNull(session.getFailStackTrace())));
+              if (ReturnCode.isSuccess(session.getReturnCode())) {
+                callbackContext.success();
+              } else {
+                callbackContext.error("Error Code: " + session.getReturnCode());
+              }
+            }
             });
             return true;
         } else if(action.equals("probe")) {
-            MediaInformation info = FFprobe.getMediaInformation(data.getString(0));
-            int returnCode = Config.getLastReturnCode();
-            if(returnCode == RETURN_CODE_SUCCESS) {
-                callbackContext.success(info.getAllProperties());
+            MediaInformationSession mediaInformationSession = FFprobeKit.getMediaInformation(data.getString(0));
+            ReturnCode returnCode = mediaInformationSession.getReturnCode();
+
+            if(ReturnCode.isSuccess(returnCode)) {
+                callbackContext.success(mediaInformationSession.getMediaInformation().getAllProperties());
             } else {
-                callbackContext.error(Config.getLastCommandOutput());
+                callbackContext.error(notNull(mediaInformationSession.getFailStackTrace()));
             }
             return true;
         } else return false;
     }
+
+  static String notNull(final String string) {
+    return (string == null) ? "" : String.format("%s%s", "\n", string);
+  }
 }

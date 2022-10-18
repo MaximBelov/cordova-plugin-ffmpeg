@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
         id="cordova-plugin-ffmpeg"
-        version="1.1.0">
+        version="1.2.0">
 
   <name>FFMpeg</name>
 
@@ -30,7 +30,7 @@
   </platform>
 
   <platform name="ios">
-    
+
     <config-file target="config.xml" parent="/widget">
       <feature name="FFMpeg">
         <param name="ios-package" value="HWPFFMpeg" />
@@ -45,7 +45,7 @@
         <source url="https://cdn.cocoapods.org/"/>
       </config>
       <pods use-frameworks="true">
-        <pod name="mobile-ffmpeg-min-gpl" spec="~> 4.4" />
+        <pod name="ffmpeg-kit-ios-full-gpl" spec="~> 4.5.1" />
       </pods>
     </podspec>
   </platform>

@@ -1,7 +1,9 @@
 #import <Cordova/CDV.h>
-#import <mobileffmpeg/MobileFFmpeg.h>
+#import <ffmpegkit/FFmpegKit.h>
+#import <ffmpegkit/FFprobeKit.h>
+#import <ffmpegkit/FFmpegKitConfig.h>
 
-@interface HWPFFMpeg : CDVPlugin<ExecuteDelegate>
+@interface HWPFFMpeg : CDVPlugin
 
 - (void) exec:(CDVInvokedUrlCommand*)command;
 - (void) probe:(CDVInvokedUrlCommand*)command;

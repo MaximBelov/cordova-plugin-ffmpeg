@@ -6,7 +6,6 @@ import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
 import { Camera, CameraOptions, PictureSourceType, MediaType } from '@awesome-cordova-plugins/camera/ngx';
 import { Chooser } from '@awesome-cordova-plugins/chooser/ngx';
 import { FFMpeg, VideoInformation } from '@awesome-cordova-plugins/ffmpeg/ngx';
-import { AdvancedImagePicker } from '@awesome-cordova-plugins/advanced-image-picker/ngx';
 
 @Component({
   selector: 'app-home',
@@ -32,7 +31,6 @@ export class HomePage {
   private readonly camera = inject(Camera);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
-  private readonly advancedImagePicker = inject(AdvancedImagePicker);
 
   constructor() {
     this.platform
@@ -89,40 +87,6 @@ export class HomePage {
       return;
     }
     const { inputFilePath, outputFilePath } = videoFileEntry
-    await this.encodeAndUpdatePreview(inputFilePath, outputFilePath);
-  }
-
-  async advancedImagePickerAndProbe() {
-    const result = await this.advancedImagePicker.present({
-      mediaType: 'VIDEO',
-      min: 1,
-      max: 1,
-      asJpeg: true
-    });
-    if (!result.length) {
-      return;
-    }
-    const { src } = result[0];
-
-    try {
-      this.videoInformation = await this.ffMpeg.probe(src);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async advancedImagePickerAndEncode() {
-    const result = await this.advancedImagePicker.present({
-      mediaType: 'VIDEO',
-      min: 1,
-      max: 1,
-      asJpeg: true
-    });
-    if (!result.length) {
-      return;
-    }
-    const { src: inputFilePath } = result[0];
-    const outputFilePath = `${this.tempDirectory}${new Date().getTime()}.mp4`;
     await this.encodeAndUpdatePreview(inputFilePath, outputFilePath);
   }
 
